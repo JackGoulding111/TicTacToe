@@ -1,21 +1,33 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './App.css';
 
 function App() {
+  const [grid, setGrid] = useState(Array(9).fill('_'));
+
+  const handleClick = (i) => {
+    const newGrid = grid.slice();
+    newGrid[i] = 'O';
+    setGrid(newGrid);
+  };
+
   const renderButton = (i) => {
-    return <button className="grid-button" key={i}>_</button>;
+    return (
+      <button className="grid-button" key={i} onClick={() => handleClick(i)}>
+        {grid[i]}
+      </button>
+    );
   };
 
   const renderGrid = () => {
-    let grid = [];
+    let gridRows = [];
     for (let row = 0; row < 3; row++) {
       let buttons = [];
       for (let col = 0; col < 3; col++) {
         buttons.push(renderButton(row * 3 + col));
       }
-      grid.push(<div className="grid-row" key={row}>{buttons}</div>);
+      gridRows.push(<div className="grid-row" key={row}>{buttons}</div>);
     }
-    return grid;
+    return gridRows;
   };
 
   return (
@@ -28,4 +40,3 @@ function App() {
 }
 
 export default App;
-// hello
