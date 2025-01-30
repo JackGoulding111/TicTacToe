@@ -11,7 +11,7 @@ function App() {
     if (winner || grid[i] !== '_') return;
 
     const newGrid = grid.slice();
-    newGrid[i] = 'X';
+    newGrid[i] = isXNext ? 'X' : 'O';
     setGrid(newGrid);
 
     const calculatedWinner = calculateWinner(newGrid);
