@@ -2,35 +2,42 @@ import React, { useState } from 'react';
 import './App.css';
 
 function App() {
-  // State to hold the current grid values
   const [grid, setGrid] = useState(Array(9).fill('_'));
-  // State to determine the next player (X or O)
   const [isXNext, setIsXNext] = useState(true);
-  // State to hold the winner
   const [winner, setWinner] = useState(null);
+  const [isAIMode, setIsAIMode] = useState(false);
 
-  // Function to handle a cell click
   const handleClick = (i) => {
-    // Ignore clicks if there's a winner or the cell is not empty
     if (winner || grid[i] !== '_') return;
 
-    // Create a copy of the grid and update the clicked cell
     const newGrid = grid.slice();
-    newGrid[i] = isXNext ? 'X' : 'O';
+    newGrid[i] = 'X';
     setGrid(newGrid);
-    // Toggle the next player
-    setIsXNext(!isXNext);
 
-    // Check for a winner
     const calculatedWinner = calculateWinner(newGrid);
     if (calculatedWinner) {
       setWinner(calculatedWinner);
+      return;
+    }
+
+    if (isAIMode) {
+      const emptyCells = newGrid.map((val, idx) => val === '_' ? idx : null).filter(val => val !== null);
+      if (emptyCells.length > 0) {
+        const randomIndex = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+        newGrid[randomIndex] = 'O';
+        setGrid(newGrid);
+
+        const aiWinner = calculateWinner(newGrid);
+        if (aiWinner) {
+          setWinner(aiWinner);
+        }
+      }
+    } else {
+      setIsXNext(!isXNext);
     }
   };
 
-  // Function to calculate the winner
   const calculateWinner = (grid) => {
-    // Winning combinations
     const lines = [
       [0, 1, 2],
       [3, 4, 5],
@@ -42,7 +49,6 @@ function App() {
       [2, 4, 6],
     ];
 
-    // Check each winning combination
     for (let i = 0; i < lines.length; i++) {
       const [a, b, c] = lines[i];
       if (grid[a] !== '_' && grid[a] === grid[b] && grid[a] === grid[c]) {
@@ -52,7 +58,6 @@ function App() {
     return null;
   };
 
-  // Function to render a single button
   const renderButton = (i) => {
     return (
       <button className="grid-button" key={i} onClick={() => handleClick(i)}>
@@ -61,7 +66,6 @@ function App() {
     );
   };
 
-  // Function to render the grid
   const renderGrid = () => {
     let gridRows = [];
     for (let row = 0; row < 3; row++) {
@@ -74,11 +78,15 @@ function App() {
     return gridRows;
   };
 
-  // Function to reset the game
   const resetGame = () => {
     setGrid(Array(9).fill('_'));
     setIsXNext(true);
     setWinner(null);
+  };
+
+  const toggleAIMode = () => {
+    setIsAIMode(!isAIMode);
+    resetGame();
   };
 
   return (
@@ -88,6 +96,9 @@ function App() {
       </div>
       {winner && <div className="winner">Winner: {winner}</div>}
       <button className="reset-button" onClick={resetGame}>Reset</button>
+      <button className="ai-button" onClick={toggleAIMode}>
+        {isAIMode ? 'Play a friend instead' : 'Play an AI instead'}
+      </button>
     </div>
   );
 }
