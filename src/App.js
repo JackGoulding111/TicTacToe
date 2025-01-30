@@ -74,12 +74,20 @@ function App() {
     return gridRows;
   };
 
+  // Function to reset the game
+  const resetGame = () => {
+    setGrid(Array(9).fill('_'));
+    setIsXNext(true);
+    setWinner(null);
+  };
+
   return (
     <div className="App">
       <div className="grid-container">
         {renderGrid()}
       </div>
       {winner && <div className="winner">Winner: {winner}</div>}
+      <button className="reset-button" onClick={resetGame}>Reset</button>
     </div>
   );
 }
